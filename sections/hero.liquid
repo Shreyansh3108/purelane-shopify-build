@@ -42,7 +42,10 @@
               {% if block.settings.icon != blank %}
   {%- assign icon_name = block.settings.icon | downcase -%}
 {%- if icon_name != blank -%}
-  {% render 'icon-' | append: icon_name %}
+  {%- if block.settings.icon != blank -%}
+  {%- assign icon_name = block.settings.icon | downcase | handle -%}
+  {%- render 'icon-' | append: icon_name -%}
+{%- endif -%}
 -{%- endif -%}
 {% endif %}
               <span>{{ block.settings.label }}</span>
