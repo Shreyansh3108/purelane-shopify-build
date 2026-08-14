@@ -40,15 +40,12 @@
           {%- for block in badge_blocks -%}
             <div class="section-hero__badge" {{ block.shopify_attributes }}>
               {%- if block.settings.icon != blank -%}
-                {%- assign icon_name = block.settings.icon | downcase | strip -%}
-                {%- if icon_name != '' -%}
-                  {%- case block.settings.icon -%}
-  {%- when 'leaf' -%}{%- render 'icon-leaf' -%}
-  {%- when 'shield' -%}{%- render 'icon-shield' -%}
-  {%- when 'heart' -%}{%- render 'icon-heart' -%}
-  {%- when 'ban' -%}{%- render 'icon-ban' -%}
-{%- endcase -%}
-                {%- endif -%}
+                {%- case block.settings.icon -%}
+                  {%- when 'leaf' -%}{%- render 'icon-leaf' -%}
+                  {%- when 'shield' -%}{%- render 'icon-shield' -%}
+                  {%- when 'heart' -%}{%- render 'icon-heart' -%}
+                  {%- when 'ban' -%}{%- render 'icon-ban' -%}
+                {%- endcase -%}
               {%- endif -%}
               <span>{{ block.settings.label }}</span>
             </div>
