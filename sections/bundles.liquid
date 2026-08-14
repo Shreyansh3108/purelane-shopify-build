@@ -1,0 +1,112 @@
+{% comment %}
+  sections/bundles.liquid
+  renders: Bundles tiers 
+{% endcomment %}
+
+{{ 'section-bundles.css' | asset_url | stylesheet_tag }}
+
+<section class="section-bundles" data-section-id="{{ section.id }}">
+  <div class="section-bundles__inner">
+    <header class="section-bundles__header rv">
+      <span class="kicker">{{ section.settings.kicker_text }}</span>
+      <h2 class="d2">{{ section.settings.heading }}</h2>
+      {%- if section.settings.body_text != blank -%}
+        <div class="section-bundles__body">{{ section.settings.body_text }}</div>
+      {%- endif -%}
+    </header>
+
+    <div class="section-bundles__grid">
+      {%- for block in section.blocks -%}
+        <div class="section-bundles__tier {% if block.settings.highlight %}section-bundles__tier--highlight{% endif %} rv" style="transition-delay: {{ forloop.index0 | times: 0.15 }}s;" {{ block.shopify_attributes }}>
+          
+          {%- if block.settings.tag_label != blank -%}
+            <div class="section-bundles__tag">{{ block.settings.tag_label }}</div>
+          {%- endif -%}
+
+          <div class="section-bundles__count">{{ block.settings.product_count }} Products</div>
+          
+          <div class="section-bundles__price-block">
+            <span class="section-bundles__price">{{ block.settings.price | money_without_trailing_zeros }}</span>
+            {%- if block.settings.compare_at_price != blank and block.settings.compare_at_price > block.settings.price -%}
+              <span class="section-bundles__compare">{{ block.settings.compare_at_price | money_without_trailing_zeros }}</span>
+            {%- endif -%}
+          </div>
+
+          <div class="section-bundles__note">
+            {{ block.settings.per_product_note }}
+          </div>
+
+          {%- if block.settings.tier_products != blank -%}
+            <div class="section-bundles__thumbs">
+              {%- for prod in block.settings.tier_products limit: 5 -%}
+                {%- if prod.featured_image != blank -%}
+                  {{ prod.featured_image | image_url: width: 100 | image_tag: class: 'section-bundles__thumb', loading: 'lazy', alt: prod.title }}
+                {%- else -%}
+                  <div class="section-bundles__thumb">
+                     {{ 'product-1' | placeholder_svg_tag: 'section-bundles__thumb-svg' }}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          {%- if block.settings.features != blank -%}
+            <ul class="section-bundles__features">
+              {%- comment -%} Convert standard text area newlines into a split-able array {%- endcomment -%}
+              {%- assign features_array = block.settings.features | newline_to_br | split: '<br />' -%}
+              
+              {%- for feature in features_array -%}
+                {%- assign f_clean = feature | strip | replace: '<br>', '' -%}
+                {%- if f_clean != blank -%}
+                  <li class="section-bundles__feature">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span>{{ f_clean }}</span>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          {%- if block.settings.cta_link != blank -%}
+            <a href="{{ block.settings.cta_link }}" class="btn {% if block.settings.highlight %}btn-primary{% else %}btn-ghost{% endif %} section-bundles__btn">
+              {{ block.settings.cta_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Bundles",
+  "tag": "section",
+  "class": "section-bundles",
+  "settings": [
+    { "type": "text", "id": "kicker_text", "label": "Kicker", "default": "Build your bundle" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "One box. Every room." },
+    { "type": "richtext", "id": "body_text", "label": "Body text" }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Bundle tier",
+      "settings": [
+        { "type": "text", "id": "tag_label", "label": "Tag", "default": "Starter" },
+        { "type": "range", "id": "product_count", "label": "Product count (display number)", "min": 2, "max": 10, "step": 1, "default": 2 },
+        { "type": "price", "id": "price", "label": "Price" },
+        { "type": "price", "id": "compare_at_price", "label": "Compare-at price" },
+        { "type": "text", "id": "per_product_note", "label": "Per-product note", "info": "e.g. Flat Rs.174 per product" },
+        { "type": "textarea", "id": "features", "label": "Features", "info": "One per line" },
+        { "type": "text", "id": "cta_label", "label": "Button label", "default": "Build this box" },
+        { "type": "url", "id": "cta_link", "label": "Button link" },
+        { "type": "checkbox", "id": "highlight", "label": "Highlight (Most Popular treatment)", "default": false },
+        { "type": "product_list", "id": "tier_products", "label": "Thumbnail products", "limit": 5 }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [{ "name": "Bundles", "blocks": [{ "type": "tier" }, { "type": "tier" }, { "type": "tier" }] }]
+}
+{% endschema %}
