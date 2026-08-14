@@ -528,5 +528,12 @@
       "send_on": "YYYY-MM-DD",
       "send_on_label": "Send on (optional)"
     }
+  },
+  "purelane": {
+    "product": {
+      "percent_off": "% off",
+      "sold_out": "Sold out",
+      "add_to_cart": "Add to cart"
+    }
   }
 }

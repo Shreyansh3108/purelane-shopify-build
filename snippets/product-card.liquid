@@ -1,0 +1,56 @@
+{% comment %}
+  snippets/product-card.liquid
+  Reads metafields: custom.badge, custom.rating, custom.review_count
+  Depends on snippets: price.liquid
+{% endcomment %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign is_available = current_variant.available
+  assign badge_text = product.metafields.custom.badge.value
+  assign rating = product.metafields.custom.rating.value
+  assign review_count = product.metafields.custom.review_count.value
+-%}
+
+<article class="product-card rv">
+  <div class="product-card__shot">
+    {%- if is_available == false -%}
+      <span class="product-card__pill product-card__pill--sold-out">{{ 'purelane.product.sold_out' | t }}</span>
+    {%- elsif badge_text != blank -%}
+      <span class="product-card__pill">{{ badge_text | escape }}</span>
+    {%- endif -%}
+
+    <a href="{{ product.url }}" class="product-card__link" aria-label="{{ product.title | escape }}">
+      {%- if product.featured_image != blank -%}
+        {{ product.featured_image | image_url: width: 400 | image_tag: class: 'product-card__image', loading: 'lazy', alt: product.title }}
+      {%- else -%}
+        <div class="product-card__placeholder" aria-hidden="true">
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </a>
+  </div>
+
+  <h4 class="product-card__title" title="{{ product.title | escape }}">
+    <a href="{{ product.url }}">{{ product.title | escape }}</a>
+  </h4>
+
+  {%- if rating != blank and review_count != blank -%}
+    <div class="product-card__rate">
+      <b>★ {{ rating }}</b> &middot; {{ review_count }} reviews
+    </div>
+  {%- endif -%}
+
+  {% render 'price', product: product %}
+
+  {%- form 'product', product, class: 'product-card__form' -%}
+    <input type="hidden" name="id" value="{{ current_variant.id }}">
+    <button type="submit" class="product-card__btn" {% unless is_available %}disabled aria-disabled="true"{% endunless %}>
+      {%- if is_available -%}
+        {{ 'purelane.product.add_to_cart' | t }}
+      {%- else -%}
+        {{ 'purelane.product.sold_out' | t }}
+      {%- endif -%}
+    </button>
+  {%- endform -%}
+</article>
