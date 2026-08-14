@@ -39,20 +39,12 @@
         <div class="section-hero__badges">
           {%- for block in badge_blocks -%}
             <div class="section-hero__badge" {{ block.shopify_attributes }}>
-              {% if block.settings.icon != blank %}
-  {%- assign icon_name = block.settings.icon | downcase -%}
-{%- if icon_name != blank -%}
-  {%- if block.settings.icon != blank -%}
-  {%- assign icon_name = block.settings.icon | downcase | handle -%}
-  {%- if block.settings.icon != blank -%}
-  {%- assign icon_name = block.settings.icon | downcase | strip -%}
-  {%- if icon_name != "" -%}
-    {%- render 'icon-' | append: icon_name -%}
-  {%- endif -%}
-{%- endif -%}
-{%- endif -%}
--{%- endif -%}
-{% endif %}
+              {%- if block.settings.icon != blank -%}
+                {%- assign icon_name = block.settings.icon | downcase | strip -%}
+                {%- if icon_name != '' -%}
+                  {%- render 'icon-' | append: icon_name -%}
+                {%- endif -%}
+              {%- endif -%}
               <span>{{ block.settings.label }}</span>
             </div>
           {%- endfor -%}
@@ -76,13 +68,13 @@
               
               {%- if product != blank and product.featured_image != blank -%}
                 {% if forloop.first %}
-  {% assign image_loading = 'eager' %}
-  {% assign image_fetchpriority = 'high' %}
-{% else %}
-  {% assign image_loading = 'lazy' %}
-  {% assign image_fetchpriority = 'auto' %}
-{% endif %}
-{{ product.featured_image | image_url: width: 800 | image_tag: class: 'section-hero__image', loading: image_loading, fetchpriority: image_fetchpriority, alt: product.title }}
+                  {% assign image_loading = 'eager' %}
+                  {% assign image_fetchpriority = 'high' %}
+                {% else %}
+                  {% assign image_loading = 'lazy' %}
+                  {% assign image_fetchpriority = 'auto' %}
+                {% endif %}
+                {{ product.featured_image | image_url: width: 800 | image_tag: class: 'section-hero__image', loading: image_loading, fetchpriority: image_fetchpriority, alt: product.title }}
               {%- else -%}
                 {{ 'product-1' | placeholder_svg_tag: 'section-hero__image' }}
               {%- endif -%}
