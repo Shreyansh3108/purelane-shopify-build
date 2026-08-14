@@ -1,0 +1,99 @@
+{% comment %}
+  sections/reviews.liquid
+  renders: Reviews rail with seamless marquee loop
+  reads metaobjects: review
+  depends on: locales (purelane.reviews)
+{% endcomment %}
+
+{{ 'section-reviews.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'section-reviews.js' | asset_url }}" defer="defer"></script>
+
+<section class="section-reviews" data-section-id="{{ section.id }}">
+  <header class="section-reviews__header rv">
+    <span class="section-reviews__kicker kicker">{{ section.settings.kicker_text }}</span>
+    
+    {%- liquid
+      assign avg_rating = 0
+      if section.settings.auto_average and section.blocks.size > 0
+        assign total_rating = 0
+        for block in section.blocks
+          assign val = block.settings.review_ref.rating.value | default: 5
+          assign total_rating = total_rating | plus: val
+        endfor
+        assign avg_rating = total_rating | times: 1.0 | divided_by: section.blocks.size | round: 1
+      elsif section.settings.aggregate_rating_override != blank
+        assign avg_rating = section.settings.aggregate_rating_override
+      endif
+    -%}
+    
+    <div class="section-reviews__stats">
+      {%- if avg_rating > 0 -%}
+        <div class="section-reviews__stat">
+          <b>★ {{ avg_rating }}</b> {{ section.settings.review_count_label }}
+        </div>
+      {%- endif -%}
+      {%- if section.settings.homes_count_label != blank -%}
+        <div class="section-reviews__stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--accent);" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+          {{ section.settings.homes_count_label }}
+        </div>
+      {%- endif -%}
+    </div>
+  </header>
+
+  <div class="section-reviews__rail-wrap rv" style="transition-delay: 0.1s;" aria-label="{{ 'purelane.reviews.aria_label' | t }}" tabindex="0">
+    <div class="section-reviews__track">
+      {%- for block in section.blocks -%}
+        {%- assign review = block.settings.review_ref -%}
+        <div class="section-reviews__card" {{ block.shopify_attributes }}>
+          
+          <div class="section-reviews__rating">
+            {%- assign stars = review.rating.value | default: 5 -%}
+            {%- for i in (1..stars) -%}★{%- endfor -%}
+          </div>
+
+          <h3 class="section-reviews__title">{{ review.title.value | default: 'Great product' }}</h3>
+          
+          <blockquote class="section-reviews__body">
+            "{{ review.body.value | default: 'Highly recommended. It worked perfectly.' }}"
+          </blockquote>
+          
+          <div class="section-reviews__author-wrap">
+            <span class="section-reviews__author">{{ review.author_name.value | default: 'Verified Buyer' }}</span>
+            {%- if review.product_tag.value != blank -%}
+              <span class="section-reviews__tag">{{ review.product_tag.value }}</span>
+            {%- endif -%}
+          </div>
+
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Reviews rail",
+  "tag": "section",
+  "class": "section-reviews",
+  "settings": [
+    { "type": "text", "id": "kicker_text", "label": "Kicker", "default": "That's what they said" },
+    { "type": "checkbox", "id": "auto_average", "label": "Auto-calculate average rating from blocks", "default": true },
+    { "type": "text", "id": "aggregate_rating_override", "label": "Manual rating override", "info": "Used if auto-average is disabled" },
+    { "type": "text", "id": "review_count_label", "label": "Review count label", "default": "from 8,000+ reviews" },
+    { "type": "text", "id": "homes_count_label", "label": "Homes count label", "default": "12 lakh+ homes" }
+  ],
+  "blocks": [
+    { 
+      "type": "review", 
+      "name": "Review", 
+      "settings": [ 
+        { "type": "metaobject", "id": "review_ref", "metaobject_type": "review", "label": "Review" } 
+      ] 
+    }
+  ],
+  "min_blocks": 3,
+  "max_blocks": 12,
+  "presets": [{ "name": "Reviews rail" }]
+}
+{% endschema %}
