@@ -1,0 +1,133 @@
+{% comment %}
+  sections/combos.liquid
+  renders: Best-selling combos section with horizontal scroll rail
+  depends on: locales (purelane.combos)
+{% endcomment %}
+
+{{ 'section-combos.css' | asset_url | stylesheet_tag }}
+
+<section class="section-combos" data-section-id="{{ section.id }}">
+  <div class="section-combos__inner">
+    <header class="section-combos__header rv">
+      <span class="kicker">{{ section.settings.kicker_text }}</span>
+      <h2 class="d2">{{ section.settings.heading }}</h2>
+      {%- if section.settings.body_text != blank -%}
+        <div class="section-combos__body">{{ section.settings.body_text }}</div>
+      {%- endif -%}
+    </header>
+
+    {%- comment -%} tabindex="0" ensures keyboard users can focus and scroll the rail {%- endcomment -%}
+    <div class="section-combos__scroll rv" style="transition-delay: 0.1s;" tabindex="0" aria-label="Combo packages">
+      {%- for block in section.blocks -%}
+        
+        {%- liquid
+          assign compare_at = 0
+          
+          for i in (1..5)
+            assign p_key = 'product_' | append: i
+            assign prod = block.settings[p_key]
+            if prod != blank
+              assign compare_at = compare_at | plus: prod.price
+            endif
+          endfor
+
+          assign display_price = block.settings.override_price | default: compare_at
+          assign savings = compare_at | minus: display_price
+        -%}
+
+        <div class="section-combos__card {% if block.settings.highlight %}section-combos__card--highlight{% endif %}" {{ block.shopify_attributes }}>
+          {%- if block.settings.flag_label != blank -%}
+            <span class="section-combos__flag">{{ block.settings.flag_label }}</span>
+          {%- endif -%}
+
+          <h3 class="section-combos__title">{{ block.settings.title }}</h3>
+          {%- if block.settings.description != blank -%}
+            <div class="section-combos__desc">{{ block.settings.description }}</div>
+          {%- endif -%}
+
+          <div class="section-combos__items">
+            {%- for i in (1..5) -%}
+              {%- liquid
+                assign p_key = 'product_' | append: i
+                assign c_key = 'callout_' | append: i
+                assign prod = block.settings[p_key]
+                assign callout = block.settings[c_key]
+              -%}
+              
+              {%- if prod != blank -%}
+                <div class="section-combos__item">
+                  {%- if prod.featured_image != blank -%}
+                    {{ prod.featured_image | image_url: width: 120 | image_tag: class: 'section-combos__img', loading: 'lazy', alt: prod.title }}
+                  {%- else -%}
+                    <div class="section-combos__placeholder" aria-hidden="true">
+                      {{ 'product-1' | placeholder_svg_tag }}
+                    </div>
+                  {%- endif -%}
+                  
+                  <div class="section-combos__item-text">
+                    <span class="section-combos__item-title">{{ prod.title }}</span>
+                    {%- if callout != blank -%}
+                      <span class="section-combos__item-callout">{{ callout }}</span>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          <div class="section-combos__footer">
+            <div class="section-combos__price-wrap">
+              <span class="section-combos__price">{{ display_price | money_without_trailing_zeros }}</span>
+              {%- if savings > 0 -%}
+                <span class="section-combos__savings">{{ 'purelane.combos.save_label' | t }} {{ savings | money_without_trailing_zeros }}</span>
+              {%- endif -%}
+            </div>
+            
+            {%- comment -%} Real form submission logic could go here; button as placeholder per UI {%- endcomment -%}
+            <button type="button" class="btn btn-primary section-combos__btn" aria-label="{{ 'purelane.combos.add_combo' | t }} - {{ block.settings.title | escape }}">
+              {{ 'purelane.combos.add_combo' | t }}
+            </button>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Best-selling combos",
+  "tag": "section",
+  "class": "section-combos",
+  "settings": [
+    { "type": "text", "id": "kicker_text", "label": "Kicker", "default": "Pre-built to save you money" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Best selling combos" },
+    { "type": "richtext", "id": "body_text", "label": "Body text" }
+  ],
+  "blocks": [
+    {
+      "type": "combo",
+      "name": "Combo",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Kitchen Essentials" },
+        { "type": "product", "id": "product_1", "label": "Product 1" },
+        { "type": "text", "id": "callout_1", "label": "Product 1 callout", "default": "Cuts grease instantly" },
+        { "type": "product", "id": "product_2", "label": "Product 2" },
+        { "type": "text", "id": "callout_2", "label": "Product 2 callout" },
+        { "type": "product", "id": "product_3", "label": "Product 3 (optional)" },
+        { "type": "text", "id": "callout_3", "label": "Product 3 callout" },
+        { "type": "product", "id": "product_4", "label": "Product 4 (optional)" },
+        { "type": "text", "id": "callout_4", "label": "Product 4 callout" },
+        { "type": "product", "id": "product_5", "label": "Product 5 (optional)" },
+        { "type": "text", "id": "callout_5", "label": "Product 5 callout" },
+        { "type": "richtext", "id": "description", "label": "Description" },
+        { "type": "text", "id": "flag_label", "label": "Flag label", "info": "e.g. Most Popular — leave blank for none" },
+        { "type": "checkbox", "id": "highlight", "label": "Highlight this combo", "default": false },
+        { "type": "price", "id": "override_price", "label": "Override price", "info": "Leave blank to auto-sum linked products" }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [{ "name": "Best-selling combos", "blocks": [{ "type": "combo" }] }]
+}
+{% endschema %}
