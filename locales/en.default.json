@@ -534,6 +534,13 @@
       "percent_off": "% off",
       "sold_out": "Sold out",
       "add_to_cart": "Add to cart"
+    },
+    "combos": {
+      "save_label": "Save",
+      "add_combo": "Add combo"
+    },
+    "reviews": {
+      "aria_label": "Customer reviews"
     }
   }
 }
