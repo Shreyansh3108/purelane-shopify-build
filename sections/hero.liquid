@@ -39,7 +39,9 @@
         <div class="section-hero__badges">
           {%- for block in badge_blocks -%}
             <div class="section-hero__badge" {{ block.shopify_attributes }}>
-              {% render 'icon-' | append: block.settings.icon %}
+              {% if block.settings.icon != blank %}
+  {% render 'icon-' | append: block.settings.icon %}
+{% endif %}
               <span>{{ block.settings.label }}</span>
             </div>
           {%- endfor -%}
