@@ -1,0 +1,156 @@
+{% comment %} 
+  sections/hero.liquid 
+  renders: Hero section with accessible carousel
+  depends on: icon-leaf.liquid, icon-shield.liquid, icon-heart.liquid, icon-ban.liquid
+{% endcomment %}
+
+{{ 'section-hero.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'section-hero.js' | asset_url }}" defer="defer"></script>
+
+<section class="section-hero" data-section-id="{{ section.id }}">
+  <div class="section-hero__inner">
+    
+    <div class="section-hero__content rv">
+      <h1 class="section-hero__heading">
+        {{ section.settings.heading_line_1 }}<br>
+        {{ section.settings.heading_line_2 }}<br>
+        <span class="section-hero__accent">{{ section.settings.heading_accent }}</span>
+      </h1>
+      
+      <div class="section-hero__body">
+        {{ section.settings.body_text }}
+      </div>
+
+      <div class="section-hero__actions">
+        {%- if section.settings.cta_primary_link != blank -%}
+          <a href="{{ section.settings.cta_primary_link }}" class="btn btn-primary">
+            {{ section.settings.cta_primary_label }}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.cta_secondary_link != blank -%}
+          <a href="{{ section.settings.cta_secondary_link }}" class="btn btn-ghost">
+            {{ section.settings.cta_secondary_label }}
+          </a>
+        {%- endif -%}
+      </div>
+
+      {%- assign badge_blocks = section.blocks | where: 'type', 'feature_badge' -%}
+      {%- if badge_blocks.size > 0 -%}
+        <div class="section-hero__badges">
+          {%- for block in badge_blocks -%}
+            <div class="section-hero__badge" {{ block.shopify_attributes }}>
+              {% render 'icon-' | append: block.settings.icon %}
+              <span>{{ block.settings.label }}</span>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- assign slide_blocks = section.blocks | where: 'type', 'slide' -%}
+    {%- if slide_blocks.size > 0 -%}
+      <hero-slider class="section-hero__slider rv" style="transition-delay: 0.2s;">
+        <div class="section-hero__track">
+          {%- for block in slide_blocks limit: 3 -%}
+            {%- assign product = block.settings.product -%}
+            <div class="section-hero__slide" 
+                 role="tabpanel"
+                 id="Slide-{{ block.id }}"
+                 aria-labelledby="Dot-{{ block.id }}"
+                 aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
+                 data-block-id="{{ block.id }}"
+                 {{ block.shopify_attributes }}>
+              
+              {%- if product != blank and product.featured_image != blank -%}
+                {% if forloop.first %}
+  {% assign image_loading = 'eager' %}
+  {% assign image_fetchpriority = 'high' %}
+{% else %}
+  {% assign image_loading = 'lazy' %}
+  {% assign image_fetchpriority = 'auto' %}
+{% endif %}
+{{ product.featured_image | image_url: width: 800 | image_tag: class: 'section-hero__image', loading: image_loading, fetchpriority: image_fetchpriority, alt: product.title }}
+              {%- else -%}
+                {{ 'product-1' | placeholder_svg_tag: 'section-hero__image' }}
+              {%- endif -%}
+
+              {%- assign label = block.settings.slide_label | default: product.title -%}
+              {%- if label != blank -%}
+                <span class="section-hero__slide-label">{{ label }}</span>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </div>
+
+        {%- if slide_blocks.size > 1 -%}
+          <div class="section-hero__dots" role="tablist">
+            {%- for block in slide_blocks limit: 3 -%}
+              <button class="section-hero__dot" 
+                      role="tab" 
+                      id="Dot-{{ block.id }}"
+                      aria-controls="Slide-{{ block.id }}"
+                      aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-label="{{ 'purelane.hero.view_slide' | t: index: forloop.index | default: 'View slide' }}">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </hero-slider>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "section",
+  "class": "section-hero-wrapper",
+  "settings": [
+    { "type": "text", "id": "heading_line_1", "label": "Heading line 1", "default": "Clean" },
+    { "type": "text", "id": "heading_line_2", "label": "Heading line 2", "default": "That" },
+    { "type": "text", "id": "heading_accent", "label": "Heading accent word", "default": "Lasts" },
+    { "type": "richtext", "id": "body_text", "label": "Body text" },
+    { "type": "text", "id": "cta_primary_label", "label": "Primary button label", "default": "Shop now" },
+    { "type": "url", "id": "cta_primary_link", "label": "Primary button link" },
+    { "type": "text", "id": "cta_secondary_label", "label": "Secondary button label", "default": "How it works" },
+    { "type": "url", "id": "cta_secondary_link", "label": "Secondary button link" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Color scheme", "default": "scheme-1" }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Product slide",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" },
+        { "type": "text", "id": "slide_label", "label": "Label override", "info": "Leave blank to auto-generate from product title. Max 3 slides will be rendered." }
+      ]
+    },
+    {
+      "type": "feature_badge",
+      "name": "Feature badge",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "options": [
+          { "value": "leaf", "label": "Leaf" },
+          { "value": "shield", "label": "Shield" },
+          { "value": "heart", "label": "Heart" },
+          { "value": "ban", "label": "Crossed circle" }
+        ]},
+        { "type": "text", "id": "label", "label": "Label", "default": "Plant powered" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Hero",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "feature_badge", "settings": { "icon": "leaf", "label": "Plant powered" } },
+        { "type": "feature_badge", "settings": { "icon": "shield", "label": "Safe for kids & pets" } },
+        { "type": "feature_badge", "settings": { "icon": "ban", "label": "Zero harsh chemicals" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
