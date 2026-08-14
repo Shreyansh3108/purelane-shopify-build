@@ -1,1 +1,113 @@
-{"name":"t:sections.header.name","type":"header","sections":{"announcement-bar":{"type":"announcement-bar","blocks":{"announcement-bar-0":{"type":"announcement","settings":{"text":"Welcome to our store","link":""}}},"block_order":["announcement-bar-0"],"settings":{"auto_rotate":false,"change_slides_speed":5,"color_scheme":"scheme-1","show_line_separator":true,"show_social":false,"enable_country_selector":false,"enable_language_selector":false}},"header":{"type":"header","settings":{"logo_position":"middle-left","mobile_logo_position":"center","menu":"main-menu","menu_type_desktop":"dropdown","sticky_header_type":"on-scroll-up","show_line_separator":true,"color_scheme":"scheme-1","menu_color_scheme":"scheme-1","enable_country_selector":true,"enable_language_selector":true,"margin_bottom":0,"padding_top":20,"padding_bottom":20}}},"order":["announcement-bar","header"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-bar-0": {
+          "type": "announcement",
+          "settings": {
+            "text": "Welcome to our store",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "announcement-bar-0"
+      ],
+      "settings": {
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "color_scheme": "scheme-1",
+        "show_line_separator": true,
+        "show_social": false,
+        "enable_country_selector": false,
+        "enable_language_selector": false
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "logo_position": "middle-left",
+        "mobile_logo_position": "center",
+        "menu": "main-menu",
+        "menu_type_desktop": "dropdown",
+        "sticky_header_type": "on-scroll-up",
+        "show_line_separator": true,
+        "color_scheme": "scheme-1",
+        "menu_color_scheme": "scheme-1",
+        "enable_country_selector": true,
+        "enable_language_selector": true,
+        "margin_bottom": 0,
+        "padding_top": 20,
+        "padding_bottom": 20
+      }
+    },
+    "hero_8zpn69": {
+      "type": "hero",
+      "blocks": {
+        "slide_Fb6RgE": {
+          "type": "slide",
+          "settings": {
+            "product": "",
+            "slide_label": ""
+          }
+        },
+        "feature_badge_LUGfEV": {
+          "type": "feature_badge",
+          "settings": {
+            "icon": "leaf",
+            "label": "Plant powered"
+          }
+        },
+        "feature_badge_DPmPx6": {
+          "type": "feature_badge",
+          "settings": {
+            "icon": "shield",
+            "label": "Safe for kids & pets"
+          }
+        },
+        "feature_badge_3xDkQk": {
+          "type": "feature_badge",
+          "settings": {
+            "icon": "ban",
+            "label": "Zero harsh chemicals"
+          }
+        }
+      },
+      "block_order": [
+        "slide_Fb6RgE",
+        "feature_badge_LUGfEV",
+        "feature_badge_DPmPx6",
+        "feature_badge_3xDkQk"
+      ],
+      "name": "Hero",
+      "settings": {
+        "heading_line_1": "Clean",
+        "heading_line_2": "That",
+        "heading_accent": "Lasts",
+        "body_text": "",
+        "cta_primary_label": "Shop now",
+        "cta_primary_link": "",
+        "cta_secondary_label": "How it works",
+        "cta_secondary_link": "",
+        "color_scheme": ""
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "header",
+    "hero_8zpn69"
+  ]
+}
